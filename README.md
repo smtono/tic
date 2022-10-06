@@ -18,8 +18,8 @@ TBD, but most likely scraping data from websites like Twitter, Reddit, Tumblr, e
 
 #### Possible Datasets
 
-*[League of Legends Tribunal](https://www.kaggle.com/datasets/simshengxue/league-of-legends-tribunal-chatlogs)*
-*[Toxic Conversation Structure GitHub Repo](https://github.com/msaveski/toxic_conversation_structure)*
+- *[League of Legends Tribunal](https://www.kaggle.com/datasets/simshengxue/league-of-legends-tribunal-chatlogs)*
+- *[Toxic Conversation Structure GitHub Repo](https://github.com/msaveski/toxic_conversation_structure)*
 
 ## Challenges Addressed
 
@@ -34,10 +34,11 @@ In the current day and age where online discourse can lead to real life violence
 
 ## Methodology
 
-Python, MySQL
-Entity recognition mining
-Text mining
-Sentiment analysis
+- Python
+- MySQL
+- Entity recognition mining
+- Text mining
+- Sentiment analysis
 
 ## Expected Results
 
