@@ -19,26 +19,70 @@ We will be using the following technologies and methods
             - detectedLanguages
 """
 
+import logging
 import os
 import json
 
 from googleapiclient import discovery
+class Perspective():
+  """
+  This class is used to configure the Perspective API and interact with it
+  You can use this class to pass in data and run analysis on it
+  
+  Attributes:
+  
+  Functions:
+  """
+  
+  def __init__(self, api_key: str=None) -> None:
+    """
+    Configures the Perspective API
+    
+    Args:
+      api_key: The API key for the Perspective API
+    """
+    
+    if api_key:
+      self.client = discovery.build(
+        "commentanalyzer",
+        "v1alpha1",
+        developerKey=api_key,
+        discoveryServiceUrl="https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1",
+        static_discovery=False,
+      )
+    else:
+      logging.warning("No API key provided for Perspective API")
+      self.client = None
+      
+      # TODO: specific exception handling ?
+      # raise Exception("No API key provided for Perspective API")
 
-API_KEY = os.getenv("GOOGLE_PERSPECTIVE_API_KEY")
-print(API_KEY)
+  def analyze(self, text: str, requested_attributes: dict=None) -> dict:
+    """
+    Analyzes the text using the Perspective API
+    
+    Args:
+      text: The text to be analyzed
+      
+    Returns:
+      The response from the Perspective API
+    """
+    if not self.client:
+      logging.warning("No client configured for Perspective API")
+      return None
 
-client = discovery.build(
-  "commentanalyzer",
-  "v1alpha1",
-  developerKey=API_KEY,
-  discoveryServiceUrl="https://commentanalyzer.googleapis.com/$discovery/rest?version=v1alpha1",
-  static_discovery=False,
-)
+    if not requested_attributes:
+      requested_attributes = {'TOXICITY': {}} # default
+    else:
+        # TODO: create structs for requested attributes / different combos
+        pass
 
-analyze_request = {
-  'comment': { 'text': 'this is a test' },
-  'requestedAttributes': {'TOXICITY': {}}
-}
+    analyze_request = {
+      'comment': { 'text': text },
+      'requestedAttributes': requested_attributes
+    }
+    
+    return self.client.comments().analyze(body=analyze_request).execute()
 
-response = client.comments().analyze(body=analyze_request).execute()
-print(json.dumps(response, indent=2))
+# TODO: test with my own tweet
+# TODO: make functions to get specific attributes
