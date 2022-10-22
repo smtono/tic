@@ -2,31 +2,36 @@
 This module contains the analysis/preprocessing functions using Twitter's API
 """
 
-class Twitter():
-  """
-  This class is used to configure the Perspective API and interact with it
-  You can use this class to pass in data and run analysis on it
-  
-  Attributes:
-  
-  Functions:
-  """
-
 import tweepy
 
-consumer_key = "XXXX" #Your API/Consumer key 
-consumer_secret = "XXXX" #Your API/Consumer Secret Key
-access_token = "XXXX"    #Your Access token key
-access_token_secret = "XXXX" #Your Access token Secret key
+class Twitter():
+    """
+    This class is used set up a Twitter API object
+    for use in tweet/data gathering.
 
-#Pass in our twitter API authentication key
-auth = tweepy.OAuth1UserHandler(
-    consumer_key, consumer_secret,
-    access_token, access_token_secret
-)
+    Attributes:
 
-#Instantiate the tweepy API
-api = tweepy.API(auth, wait_on_rate_limit=True)
+    Functions:
+    """
+    def __init__(self, consumer_key: str, consumer_secret: str, access_token: str, access_token_secret: str):
+        """
+        This function is used to set up the Twitter API object
+        """
+        # Authentication
+        # callback_uri = 'oob'
+        auth = tweepy.OAuthHandler(
+            consumer_key, consumer_secret, 'oob')
+        auth.set_access_token(access_token, access_token_secret)
+
+        self.api = tweepy.API(auth)
+    
+    def get_tweets(self, query: str, count: int=10):
+        """
+        This function is used to get tweets from the Twitter API
+        """
+        tweets = self.api.search(q=query, count=count)
+        return tweets
+        
 
 # TODO: test scraping for my own account
 

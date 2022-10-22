@@ -7,6 +7,7 @@ import logging
 import os
 
 from api.perspective import Perspective
+from api.twitter import Twitter
 
 
 class Configuration():
