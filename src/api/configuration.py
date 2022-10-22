@@ -57,3 +57,6 @@ class Configuration():
         # API configuration
         perspective = Perspective(self.ctx["perspective_api"])
         twitter = Twitter(self.ctx["twitter_api"])
+        
+        self.ctx["perspective"] = perspective
+        self.ctx["twitter"] = twitter
