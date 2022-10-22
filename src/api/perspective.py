@@ -30,8 +30,10 @@ class Perspective():
   You can use this class to pass in data and run analysis on it
   
   Attributes:
+    client: The client for the Perspective API
   
   Functions:
+    analyze: Analyzes the text using the Perspective API
   """
   
   def __init__(self, api_key: str=None) -> None:
