@@ -6,8 +6,8 @@ for preprocessing and analysis
 import logging
 import os
 
-from api.perspective import Perspective
-from api.twitter import Twitter
+from analysis.perspective import Perspective
+from preprocessing.twitter import Twitter
 
 
 class Configuration():
@@ -22,8 +22,9 @@ class Configuration():
         Sets up a context dictionary containing the configuration
         """
         self.ctx = {
-            "twitter_api": None,
-            "perspective_api": None
+            "twitter_api": {},
+            "perspective_api": {},
+            "database": None,
         }
     
     def setup_api(self) -> None:

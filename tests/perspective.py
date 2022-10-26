@@ -5,11 +5,11 @@ and its functions for analyzing pieces of text
 
 import os
 import unittest
-import src.api.perspective as perspective
+import analysis.perspective as perspective
 
 class TestPerspective(unittest.TestCase):
     """
-    OBJECTIVE: Test the Perspective API class
+    Test the Perspective API class
     """
     def test_configuration(self):
         """
@@ -35,3 +35,5 @@ class TestPerspective(unittest.TestCase):
         OBJECTIVE: Test the analyze function
         """
     
+if __name__ == "__main__":
+    unittest.main()
