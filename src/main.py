@@ -19,6 +19,15 @@ This program will use the following technologies and methods
     For finding relevant information in the dataset
 - Sentiment analysis
     For finding the "mood" of individual texts in the dataset
+
+Usage:
+    python main.py [options] [arguments]
 """
 
+def main():
+    """
+    Main entry point for the program
+    """
 
+if __name__ == "__main__":
+    main()
