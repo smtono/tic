@@ -5,7 +5,7 @@ This module is used to test the Twitter class
 from asyncio.log import logger
 import os
 import unittest
-import src.preprocessing.twitter as twitter
+import src.api.twitter as twitter
 
 class TestTwitter(unittest.TestCase):
     """
