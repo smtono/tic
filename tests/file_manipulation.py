@@ -9,7 +9,7 @@ Functions being tested:
 """
 
 import unittest
-import src.util as util
+import util.file_util as file_util
 
 class TestFileManipulation(unittest.TestCase):
     """
@@ -19,14 +19,14 @@ class TestFileManipulation(unittest.TestCase):
         """
         OBJECTIVE: Test the read_file function
         """
-        self.assertEqual(util.read_file("tests/resources/test_file.txt"), "This is a test file")
+        self.assertEqual(file_util.read_file("tests/resources/test_file.txt"), "This is a test file")
 
     def test_write_file(self):
         """
         OBJECTIVE: Test the write_file function
         """
-        util.write_file("This is a test", "tests/test_file.txt")
-        self.assertEqual(util.read_file("tests/resources/test_file.txt"), "This is a test")
+        file_util.write_file("This is a test", "tests/test_file.txt")
+        self.assertEqual(file_util.read_file("tests/resources/test_file.txt"), "This is a test")
 
         # reset file
         with open("tests/test_file.txt", "w") as file:

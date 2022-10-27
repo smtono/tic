@@ -5,9 +5,10 @@ for preprocessing and analysis
 
 import logging
 import os
+from database.database import Database
 
-from analysis.perspective import Perspective
-from preprocessing.twitter import Twitter
+from preprocessing.perspective import Perspective
+from collection.twitter import Twitter
 
 
 class Configuration():
@@ -27,6 +28,20 @@ class Configuration():
             "database": None,
         }
     
+    def setup_database(self) -> None:
+        """
+        Sets up the database
+        
+        Args:
+            None
+        Returns:
+            None
+        """
+        database = Database()
+        
+        if not os.path.exists("database/tic.db"):
+            database.create_db("tic")
+    
     def setup_api(self) -> None:
         """
         Sets up the configuration context
@@ -36,7 +51,6 @@ class Configuration():
         Reutrns:
             None
         """
-        
         # Keys
         if os.path.exists(".env"):
             twitter_api_key = os.getenv("TWITTER_API_KEY")
@@ -50,6 +64,7 @@ class Configuration():
             else:
                 logging.warning("No Perspective API key found in .env file")
         else:
+            # TODO: fix this so it asks for EVERY key needed
             logging.info("Entering API keys manually")
             twitter_api_key = input("Enter Twitter API key: ")
             perspective_api_key = input("Enter Perspective API key: ")
