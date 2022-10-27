@@ -37,10 +37,13 @@ class Configuration():
         Returns:
             None
         """
-        database = Database()
+        database = Database("tic")
+        self.ctx["database"] = database
         
-        if not os.path.exists("database/tic.db"):
-            database.create_db("tic")
+        # Table initialization
+        database.create_table("unprocessed", "")
+        database.create_table("processed", "")
+        database.create_table("community", "")
     
     def setup_api(self) -> None:
         """

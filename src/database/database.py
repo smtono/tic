@@ -12,7 +12,7 @@ class Database():
     """
     This class is used to create a database and manipulate it.
     """
-    def __init__(self, db_name:str) -> None:
+    def __init__(self, db_name: str) -> None:
         self.connector = sqlite3.connect(f"{db_name}.db")
         self.cursor = self.connector.cursor()
 
@@ -24,8 +24,7 @@ class Database():
             db_name: str
                 The name of the database to be created
         """
-        self.connector = sqlite3.connect(f"{db_name}.db")
-        self.cursor = self.connector.cursor()
+        open(f'database/{db_name}.db', 'w+')
 
     #######################
     # Query Manipulation
