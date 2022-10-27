@@ -21,13 +21,33 @@ This program will use the following technologies and methods
     For finding the "mood" of individual texts in the dataset
 
 Usage:
-    python main.py [options] [arguments]
+    python main.py
 """
+
+import argparse
+
+from util.configuration import Configuration
+
 
 def main():
     """
     Main entry point for the program
     """
+    # Configuration
+    config = Configuration()
+    config.setup_database()
+    config.setup_api()
+    
+    # Global Context
+    ctx = config.ctx
+    
+    # CLI
+    parser = argparse.ArgumentParser()
+    subparser = parser.add_subparsers(dest='command')
+    
+    gettweets = subparser.add_parser('gettweets')
+    #register = subparser.add_parser('register')
+
 
 if __name__ == "__main__":
     main()
