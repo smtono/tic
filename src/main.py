@@ -20,11 +20,16 @@ This program will use the following technologies and methods
 - Sentiment analysis
     For finding the "mood" of individual texts in the dataset
 
+Commands:
+    twitter --query <query> --count <count>
+    perspective --text <text> --attributes <attributes>
+
 Usage:
-    python main.py
+    python main.py <command> [<args>...]
 """
 
 from util.configuration import Configuration
+from util.parser import Parser
 
 
 def main():
@@ -35,11 +40,10 @@ def main():
     config = Configuration()
     config.setup_database()
     config.setup_api()
+    parser = Parser(config.ctx)
     
-    # Global Context
-    ctx = config.ctx
-    
-    # CLI
+    # Run the parser
+    parser.parser.parse_args()
 
 
 if __name__ == "__main__":

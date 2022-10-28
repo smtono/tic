@@ -15,6 +15,36 @@
             "env": {
               "PYTHONPATH": "${workspaceFolder}"
             }
+        },
+        {
+            "name": "With Twitter Arguments",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "env": {
+              "PYTHONPATH": "${workspaceFolder}"
+            }
+        },
+        {
+            "name": "With Perspective Arguments",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                
+            ],
+            "envFile": "${workspaceFolder}/.env",
+            "env": {
+              "PYTHONPATH": "${workspaceFolder}"
+            }
         }
     ]
 }
