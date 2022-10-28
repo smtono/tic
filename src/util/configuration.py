@@ -25,6 +25,8 @@ class Configuration():
         self.ctx = {
             "twitter_api": {},
             "perspective_api": {},
+            "twitter": None,
+            "perspective": None,
             "database": None,
         }
     
@@ -56,23 +58,31 @@ class Configuration():
         """
         # Keys
         if os.path.exists(".env"):
-            twitter_api_key = os.getenv("TWITTER_API_KEY")
-            perspective_api_key = os.getenv("PERSPECTIVE_API_KEY")
-            if twitter_api_key:
-                self.ctx["twitter_api"] = twitter_api_key
-            else:
-                logging.warning("No Twitter API key found in .env file")
-            if perspective_api_key:
-                self.ctx["perspective_api"] = perspective_api_key
-            else:
-                logging.warning("No Perspective API key found in .env file")
+            try:
+                # Twitter API
+                self.ctx["twitter_api"]["consumer_key"] = os.getenv("TWITTER_CONSUMER_KEY")
+                self.ctx["twitter_api"]["consumer_secret"] = os.getenv("TWITTER_CONSUMER_SECRET")
+                self.ctx["twitter_api"]["access_token"] = os.getenv("TWITTER_ACCESS_TOKEN")
+                self.ctx["twitter_api"]["access_token_secret"] = os.getenv("TWITTER_ACCESS_TOKEN_SECRET")
+                self.ctx["twitter_api"]["bearer_token"] = os.getenv("TWITTER_BEARER_TOKEN")
+                self.ctx["twitter_api"]["client_id"] = os.getenv("TWITTER_CLIENT_ID")
+                self.ctx["twitter_api"]["client_secret"] = os.getenv("TWITTER_CLIENT_SECRET")
+                # Perspective API
+                self.ctx["perspective_api"]["api_key"] = os.getenv("GOOGLE_PERSPECTIVE_API_KEY")
+            except Exception as e:
+                logging.error(f"Error: {e}")
         else:
-            # TODO: fix this so it asks for EVERY key needed
+            # Twitter API
             logging.info("Entering API keys manually")
-            twitter_api_key = input("Enter Twitter API key: ")
-            perspective_api_key = input("Enter Perspective API key: ")
-            self.ctx["twitter_api"] = twitter_api_key
-            self.ctx["perspective_api"] = perspective_api_key
+            self.ctx["twitter_api"]["consumer_key"] = input("Enter Twitter consumer key: ")
+            self.ctx["twitter_api"]["consumer_secret"] = input("Enter Twitter consumer secret: ")
+            self.ctx["twitter_api"]["access_token"] = input("Enter Twitter access token: ")
+            self.ctx["twitter_api"]["access_token_secret"] = input("Enter Twitter access token secret: ")
+            self.ctx["twitter_api"]["bearer_token"] = input("Enter Twitter bearer token: ")
+            self.ctx["twitter_api"]["client_id"] = input("Enter Twitter client id: ")
+            self.ctx["twitter_api"]["client_secret"] = input("Enter Twitter client secret: ")
+            # Perspective API
+            self.ctx["perspective_api"]["api_key"] = input("Enter Google Perspective API key: ")
         
         # API configuration
         perspective = Perspective(self.ctx["perspective_api"])

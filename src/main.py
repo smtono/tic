@@ -24,8 +24,6 @@ Usage:
     python main.py
 """
 
-import argparse
-
 from util.configuration import Configuration
 
 
@@ -42,11 +40,6 @@ def main():
     ctx = config.ctx
     
     # CLI
-    parser = argparse.ArgumentParser()
-    subparser = parser.add_subparsers(dest='command')
-    
-    gettweets = subparser.add_parser('gettweets')
-    #register = subparser.add_parser('register')
 
 
 if __name__ == "__main__":
