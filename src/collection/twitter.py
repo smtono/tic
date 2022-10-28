@@ -61,18 +61,14 @@ class Twitter():
         tweets = self.api.search(q=query, count=count)
         return tweets
 
-    def get_mass_tweets(self, query: str):
+    def read_command(self, command: str):
         """
-        This function is used to get a large number of tweets from the Twitter API
+        This function is used to read a command from teh CLI
         
         Args:
-            query: str
-                The query to search for
-            count: int
-                The number of tweets to return
+            command: str
+                The command to read
         
         Returns:
-            tweets: list
+            None
         """
-        tweets = self.api.search(q=query, count=1000)
-        return tweets
