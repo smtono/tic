@@ -85,8 +85,12 @@ class Configuration():
             self.ctx["perspective_api"]["api_key"] = input("Enter Google Perspective API key: ")
         
         # API configuration
-        perspective = Perspective(self.ctx["perspective_api"])
-        twitter = Twitter(self.ctx["twitter_api"])
-        
+        perspective = Perspective(self.ctx["perspective_api"]['api_key'])
+        twitter = Twitter(
+            self.ctx["twitter_api"]['consumer_key'],
+            self.ctx["twitter_api"]['consumer_secret'],
+            self.ctx["twitter_api"]['access_token'],
+            self.ctx["twitter_api"]['access_token_secret']
+        )
         self.ctx["perspective"] = perspective
         self.ctx["twitter"] = twitter

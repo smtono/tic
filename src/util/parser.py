@@ -21,8 +21,17 @@ class Parser():
             ctx: dict
                 The context dictionary containing the configuration
         """
-        self.parser = argparse.ArgumentParser()
+        self.parser = argparse.ArgumentParser(
+            prog='tic',
+            description='TIC - Toxic Internet Communities',
+            epilog='This program is used to analyze datasets and create visualizations regarding Internet communities'
+        )
         subparser = self.parser.add_subparsers(dest='command')
+        
+        # Admin Command
+        admin = subparser.add_parser('admin', help='Admin commands')
+        finish = admin.add_subparsers(dest='admin_command')
+        finish.add_parser('finish', help='End the program')
         
         # Twitter Command
         twitter = subparser.add_parser('twitter')

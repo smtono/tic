@@ -25,9 +25,10 @@ Commands:
     perspective --text <text> --attributes <attributes>
 
 Usage:
-    python main.py <command> [<args>...]
+    python tic <command> [<args>...]
 """
 
+import logging
 from util.configuration import Configuration
 from util.parser import Parser
 
@@ -40,11 +41,24 @@ def main():
     config = Configuration()
     config.setup_database()
     config.setup_api()
-    parser = Parser(config.ctx)
+    ctx = config.ctx
+    parser = Parser(ctx)
     
-    # Run the parser
-    parser.parser.parse_args()
-
+    # Run the CLI
+    while True:
+        # Get input from the user
+        user_input = input('tic> ')
+        args = parser.parser.parse_args(user_input.split())
+        
+        # Parse command
+        if args.command == 'admin':
+            logging.info('Admin command')
+        elif args.command == 'twitter':
+            logging.info('Twitter command')
+            ctx['twitter'].read_command(args)
+        elif args.command == 'perspective':
+            logging.info('Perspective command')
+            ctx['perspective'].read_command(args)
 
 if __name__ == "__main__":
     main()
