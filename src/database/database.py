@@ -13,7 +13,7 @@ class Database():
     This class is used to create a database and manipulate it.
     """
     def __init__(self, db_name: str) -> None:
-        self.connector = sqlite3.connect(f"{db_name}.db")
+        self.connector = sqlite3.connect(f"src\database\{db_name}.db")
         self.cursor = self.connector.cursor()
 
     def create_db(self, db_name: str):
