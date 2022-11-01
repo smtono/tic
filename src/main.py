@@ -49,7 +49,7 @@ def main():
         # Get input from the user
         user_input = input('tic> ')
         args = parser.parser.parse_args(user_input.split())
-        
+
         # Parse command
         if args.command == 'admin':
             logging.info('Admin command')

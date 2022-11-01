@@ -21,29 +21,30 @@ class Parser():
             ctx: dict
                 The context dictionary containing the configuration
         """
+        # Top level parser
         self.parser = argparse.ArgumentParser(
             prog='tic',
             description='TIC - Toxic Internet Communities',
             epilog='This program is used to analyze datasets and create visualizations regarding Internet communities'
         )
         subparser = self.parser.add_subparsers(dest='command')
-        
-        # Admin Command
+
+        # Admin parser
         admin = subparser.add_parser('admin', help='Admin commands')
-        finish = admin.add_subparsers(dest='admin_command')
-        finish.add_parser('finish', help='End the program')
+        finish = argparse.ArgumentParser(parents=[self.parser], add_help=False)
+        finish.add_argument('finish', action='store_true', help='Finish the program')
         
-        # Twitter Command
+        # Twitter parser
         twitter = subparser.add_parser('twitter')
-        get = twitter.add_subparsers(dest='twitter')
+        get = argparse.ArgumentParser(parents=[self.parser], add_help=False)
         get.add_argument('--query', type=str, help='The query to search for', required=True)
         get.add_argument('--count', type=int, help='The count of tweets to return', required=False)
         
-        # Perspective Command
+        # Perspective parser
         perspective = subparser.add_parser('perspective')
-        analyze = perspective.add_subparsers(dest='perspective')
+        analyze = argparse.ArgumentParser(parents=[self.parser], add_help=False)
         analyze.add_argument('--text', type=str, help='The text to analyze', required=True)
         analyze.add_argument('--attributes', type=str, nargs='*', help='The attributes to analyze', required=False)
         
-        # Database Command
-        database = subparser.add_parser('database')
+        # Database parser
+        database = argparse.ArgumentParser(parents=[self.parser], add_help=False)
