@@ -144,3 +144,4 @@ dmypy.json
 
 # Ignore data files
 resources/datasets/archive/*
+src/database/external/*
