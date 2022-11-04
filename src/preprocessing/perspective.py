@@ -85,6 +85,3 @@ class Perspective():
     }
     
     return self.client.comments().analyze(body=analyze_request).execute()
-
-# TODO: test with my own tweet
-# TODO: make functions to get specific attributes

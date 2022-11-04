@@ -11,7 +11,7 @@ Notes:
 This program will use the following technologies and methods
 - Python
     For data analysis using pandas and other data libraries
-- MySQL
+- SQLite
     For storing our datasets locally and fetching from in the future
 - Entity recognition mining
     For finding the most common words and phrases in the dataset
@@ -21,8 +21,18 @@ This program will use the following technologies and methods
     For finding the "mood" of individual texts in the dataset
 
 Commands:
-    twitter --query <query> --count <count>
-    perspective --text <text> --attributes <attributes>
+    get <query> <count>
+        Gets the specified number of tweets from the query passed
+        Stores this data in the database under the UNPROCESSED table
+    clean <type> <source>
+        Cleans the data in the source table by running demoji, deurl, and deretweet
+        Cleans the data by removing stop words
+        Also adds toxicity metrics by running data through Perspective
+    analyze <type> <source>
+        Analyzes the data in the source table by running distance metrics and sentiment analysis
+        As well as running entity recognition mining and text mining
+    visualize <type> <source>
+        Visualizes the data in the source table by creating graphs and charts
 
 Usage:
     python tic <command> [<args>...]
@@ -50,15 +60,6 @@ def main():
         user_input = input('tic> ')
         args = parser.parser.parse_args(user_input.split())
 
-        # Parse command
-        if args.command == 'admin':
-            logging.info('Admin command')
-        elif args.command == 'twitter':
-            logging.info('Twitter command')
-            ctx['twitter'].read_command(args)
-        elif args.command == 'perspective':
-            logging.info('Perspective command')
-            ctx['perspective'].read_command(args)
 
 if __name__ == "__main__":
     main()
