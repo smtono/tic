@@ -58,7 +58,8 @@ def main():
     while True:
         # Get input from the user
         user_input = input('tic> ')
-        args = parser.parser.parse_args(user_input.split())
+        args = user_input.split(' ')
+        parser.parse(args)
 
 
 if __name__ == "__main__":

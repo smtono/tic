@@ -60,15 +60,3 @@ class Twitter():
         """
         tweets = self.api.search(q=query, count=count)
         return tweets
-
-    def read_command(self, command: str):
-        """
-        This function is used to read a command from teh CLI
-        
-        Args:
-            command: str
-                The command to read
-        
-        Returns:
-            None
-        """
