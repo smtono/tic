@@ -77,12 +77,12 @@ class Parser():
         tweets = self.ctx['twitter'].get_tweets(query, count)
         
         # Insert tweets into unprocessed table in DB
-        """
         for tweet in tweets:
-            self.ctx['db'].insert_unprocessed(tweet)
-        """
+            self.ctx['db'].insert_data('unprocessed', 'text', tweet)
+
+        # Return the tweets
         for tweet in tweets:
-            print(tweet)
+            print(tweet.text)
         return tweets
     
     def clean(self, args: list):

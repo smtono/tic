@@ -58,5 +58,5 @@ class Twitter():
         Returns:
             tweets: list
         """
-        tweets = self.api.search(q=query, count=count)
+        tweets = self.api.search_tweets(q=query, count=count)
         return tweets
