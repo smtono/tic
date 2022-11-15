@@ -74,7 +74,17 @@ class Perspective():
       return None
 
     if not requested_attributes:
-      requested_attributes = {'TOXICITY': {}} # default
+      requested_attributes = {
+        'TOXICITY': {},
+        'INSULT': {},
+        'THREAT': {},
+        'SEXUALLY_EXPLICIT': {},
+        'FLIRTATION': {},
+        'ATTACK_ON_AUTHOR': {},
+        'ATTACK_ON_COMMENTOR': {},
+        'INFLAMMATORY': {},
+        'OBSCENE': {},
+      } # default
     else:
         # TODO: create structs for requested attributes / different combos
         pass
