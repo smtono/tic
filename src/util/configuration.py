@@ -5,7 +5,7 @@ for preprocessing and analysis
 
 import logging
 import os
-from database.database import Database
+from database.sql.database import Database
 
 from preprocessing.perspective import Perspective
 from collection.twitter import Twitter
@@ -48,9 +48,9 @@ class Configuration():
             self.ctx["database"] = database
             
             # Table initialization
-            database.create_table("unprocessed", "")
-            database.create_table("processed", "")
-            database.create_table("community", "")
+            database.create_table("unprocessed", "community", "text")
+            database.create_table("processed", "community", "text", "toxicity_score")
+            database.create_table("community", "text", "toxicity_score")
     
     def setup_api(self) -> None:
         """
