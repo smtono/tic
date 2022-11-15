@@ -5,6 +5,7 @@ for preprocessing and analysis
 
 import logging
 import os
+from database.csv.database import CsvHelper
 from database.sql.database import Database
 
 from preprocessing.perspective import Perspective
@@ -27,8 +28,15 @@ class Configuration():
             "perspective_api": {},
             "twitter": None,
             "perspective": None,
+            "csv_helper": None,
             "database": None,
         }
+    
+    def setup_csv(self) -> None:
+        """
+        Sets up the CSV helper
+        """
+        self.ctx["csv_helper"] = CsvHelper()
     
     def setup_database(self) -> None:
         """
