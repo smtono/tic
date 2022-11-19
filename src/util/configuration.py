@@ -54,11 +54,10 @@ class Configuration():
             logging.info("Creating database")
             database = Database("tic")
             self.ctx["database"] = database
-            
             # Table initialization
-            database.create_table("unprocessed", "community", "text")
-            database.create_table("processed", "community", "text", "toxicity_score")
-            database.create_table("community", "text", "toxicity_score")
+            database.create_table("unprocessed", "community TEXT, postID int, data TEXT, PRIMARY KEY (postID)")
+            database.create_table("processed", "community TEXT, postID int, data TEXT, toxicity_score REAL, PRIMARY KEY (postID)")
+            database.create_table("community", "data TEXT, toxicity_score REAL, PRIMARY KEY (userID)")
     
     def setup_api(self) -> None:
         """

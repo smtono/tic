@@ -78,7 +78,7 @@ class Parser():
         
         # Insert tweets into unprocessed table in DB
         for tweet in tweets:
-            self.ctx['db'].insert_data('unprocessed', 'text', tweet)
+            self.ctx['db'].insert_data('unprocessed', 'community, postID, data', f"{query}, {tweet.id}, '{tweet.text}'")
 
         # Return the tweets
         for tweet in tweets:

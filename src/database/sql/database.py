@@ -63,7 +63,7 @@ class Database():
                 The data to be inserted
         """
         try:
-            self.cursor.execute(f"INSERT INTO {table_name} ({columns}) VALUES ({data});")
+            self.cursor.execute(f"INSERT INTO {table_name} ({columns}) VALUES ({data})")
         except Error as err:
             if err != 0:
                 logging.warning("Problem with Data Insertion.")

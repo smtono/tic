@@ -2,8 +2,6 @@
 This module contains the analysis/preprocessing functions using Twitter's API
 """
 
-from http import client
-import os
 import tweepy
 
 class Twitter():
