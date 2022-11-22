@@ -8,6 +8,9 @@ The following clustering algorithms are used:
 """
 
 # TODO: Fix these functions
+from sklearn.cluster import AffinityPropagation, AgglomerativeClustering, KMeans, KMedoids
+
+
 def kmeans_clustering(data, n_clusters=5):
     """
     This function is used to cluster the data using K-Means.
