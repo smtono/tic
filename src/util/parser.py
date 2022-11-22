@@ -6,16 +6,14 @@ Commands include:
     - get <query> --c <count>
         Gets the specified number of tweets from the query passed
         Stores this data in the database under the UNPROCESSED table
-    - clean <type> <source>
+    - clean <name>
         Cleans the data in the source table by running demoji, deurl, and deretweet
         Cleans the data by removing stop words
         Also adds toxicity metrics by running data through Perspective
     
 """
 
-import re
-
-
+from preprocessing.clean import run_all
 class Parser():
     """
     Class definiton for CLI parser
@@ -78,7 +76,7 @@ class Parser():
         
         # Insert tweets into unprocessed table in DB
         for tweet in tweets:
-            self.ctx['db'].insert_data('unprocessed', 'community, postID, data', f"{query}, {tweet.id}, '{tweet.text}'")
+            self.ctx['database'].insert_data('unprocessed', 'community, postID, data', f"{query}, {tweet.id}, '{tweet.text}'")
 
         # Return the tweets
         for tweet in tweets:
@@ -91,7 +89,26 @@ class Parser():
         Cleans the data by removing stop words
         Also adds toxicity metrics by running data through Perspective
         """
-    
+        # Get the name of dataset to clean
+        dataset = args[0]
+        
+        # Get the data that has that name from DB
+        data = self.ctx['database'].select_data('*', 'unprocessed', f"community = '{dataset}'")
+        
+        cleaned_data = []
+        # Clean the data
+        for row in data:
+            cleaned_data.append(run_all(row[2]))
+        
+        parameterized_data = []
+        # Add toxicity metrics
+        for row in cleaned_data:
+            self.ctx['perspective'].analyze(row)
+            
+        for row in parameterized_data:
+            # TODO: test this
+            self.ctx['database'].insert_data('processed', 'community, postID, data', f"{dataset}, {row[0]}, '{row[1]}'")
+
     def analyze(self, args: list):
         """
         Analyzes the data in the source table by running distance metrics and sentiment analysis
