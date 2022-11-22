@@ -29,7 +29,7 @@ class Database():
     #######################
     # Query Manipulation
     ########################
-    def select_data(self, query_for: str, query_table: str):
+    def select_data(self, query_for: str, query_table: str, where: str):
         """
         Selects data from a table
 
@@ -40,7 +40,7 @@ class Database():
                 The table to be queried
         """
         try:
-            self.cursor.execute(f"SELECT {query_for} FROM {query_table};")
+            self.cursor.execute(f"SELECT {query_for} FROM {query_table} WHERE {where};")
             print(self.cursor.fetchall())
         except Error as err:
             if err != 0:
