@@ -56,7 +56,20 @@ class Configuration():
             self.ctx["database"] = database
             # Table initialization
             database.create_table("unprocessed", "community TEXT, postID int, data TEXT, PRIMARY KEY (postID)")
-            database.create_table("processed", "community TEXT, postID int, data TEXT, toxicity_score REAL, PRIMARY KEY (postID)")
+            database.create_table("processed ", 
+                                  "community TEXT, "
+                                  "postID int, "
+                                  "data TEXT, "
+                                  "toxicity_score REAL, "
+                                  "insult_score REAL, "
+                                  "threat_score REAL, "
+                                  "sexually_explicit_score REAL, "
+                                  "flirtation_score REAL, "
+                                  "attack_on_author_score REAL, "
+                                  "attack_on_commentor_score REAL, "
+                                  "inflammatory_score REAL, "
+                                  "obscene_score REAL, "
+                                  "PRIMARY KEY (postID)")
             database.create_table("community", "data TEXT, toxicity_score REAL, PRIMARY KEY (userID)")
     
     def setup_api(self) -> None:
