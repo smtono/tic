@@ -38,7 +38,6 @@ Usage:
     python tic <command> [<args>...]
 """
 
-import logging
 from util.configuration import Configuration
 from util.parser import Parser
 
@@ -50,7 +49,7 @@ def main():
     # Configuration
     config = Configuration()
     #config.setup_csv()
-    #config.setup_database()
+    config.setup_database()
     config.setup_api()
     ctx = config.ctx
     parser = Parser(ctx)
