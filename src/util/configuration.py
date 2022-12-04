@@ -47,8 +47,10 @@ class Configuration():
         Returns:
             None
         """
-        if os.path.exists(os.path.join(os.getcwd(), "src", "database", "tic.db")):
+        if os.path.exists(os.path.join(os.getcwd(), "src", "data", "tic.db")):
             logging.info("Database already exists")
+            database = Database("tic")
+            self.ctx["database"] = database
             return
         else:
             logging.info("Creating database")
@@ -70,7 +72,7 @@ class Configuration():
                                   "inflammatory_score REAL, "
                                   "obscene_score REAL, "
                                   "PRIMARY KEY (postID)")
-            database.create_table("community", "data TEXT, toxicity_score REAL, PRIMARY KEY (userID)")
+            database.create_table("community", "community TEXT, score REAL, topics TEXT, PRIMARY KEY (community)")
     
     def setup_api(self) -> None:
         """

@@ -6,11 +6,17 @@ Commands include:
     - get <query> --c <count>
         Gets the specified number of tweets from the query passed
         Stores this data in the database under the UNPROCESSED table
-    - clean <name>
+    - clean <dataset>
         Cleans the data in the source table by running demoji, deurl, and deretweet
         Cleans the data by removing stop words
-        Also adds toxicity metrics by running data through Perspective
-    
+    -gain <method> <dataset>
+        Run perspective API to gain toxicity metrics
+        Run distance metrics to gain similarity metrics
+        Run entity recognition mining to gain topically relevant words
+    -analyze <method> <dataset>
+        Analyzes the data in the source table by running distance metrics and sentiment analysis
+    -visualize <method> <dataset>
+        Visualizes the data in the source table by creating graphs and charts
 """
 
 from preprocessing.clean import run_all
@@ -68,7 +74,8 @@ class Parser():
         """
         # Get the query and count from the args
         command = ' '.join(args)
-        query = command.split('--c')[0].strip()
+        community = args[0]
+        query = args[1]
         count = command.split('--c')[1].strip()
 
         # Get tweets
@@ -76,7 +83,9 @@ class Parser():
         
         # Insert tweets into unprocessed table in DB
         for tweet in tweets:
-            self.ctx['database'].insert_data('unprocessed', 'community, postID, data', f"{query}, {tweet.id}, '{tweet.text}'")
+            self.ctx['database'].insert_data('unprocessed', 'community, postID, data', f"'{community}', '{tweet.id}', '{tweet.text}'")
+        
+        self.ctx['database'].commit()
 
         # Return the tweets
         for tweet in tweets:
@@ -100,14 +109,8 @@ class Parser():
         for row in data:
             cleaned_data.append(run_all(row[2]))
         
-        parameterized_data = []
-        # Add toxicity metrics
-        for row in cleaned_data:
-            self.ctx['perspective'].analyze(row)
-            
-        for row in parameterized_data:
-            # TODO: test this
-            self.ctx['database'].insert_data('processed', 'community, postID, data', f"{dataset}, {row[0]}, '{row[1]}'")
+        # Insert the cleaned data into the processed table
+        self.ctx['database'].insert_data('processed', 'community, postID, data', f"'{dataset}', '{row[1]}', '{cleaned_data}'")
 
     def analyze(self, args: list):
         """
