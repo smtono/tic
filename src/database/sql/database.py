@@ -29,7 +29,7 @@ class Database():
     #######################
     # Query Manipulation
     ########################
-    def select_data(self, query_for: str, query_table: str, where: str):
+    def select_data(self, query_for: str, query_table: str, where: str=None):
         """
         Selects data from a table
 
@@ -39,16 +39,28 @@ class Database():
             query_table: str
                 The table to be queried
         """
-        try:
-            self.cursor.execute(f"SELECT {query_for} FROM {query_table} WHERE {where};")
-            print(self.cursor.fetchall())
-        except Error as err:
-            if err != 0:
-                logging.warning("Problem with table Select.")
-                logging.error(f"error code: {err}")
-            else:
-                logging.error("An unknown problem has occured.")
-                raise Exception("An unknown problem has occured.")
+        if where:
+            try:
+                self.cursor.execute(f"SELECT {query_for} FROM {query_table} WHERE {where};")
+                return self.cursor.fetchall()
+            except Error as err:
+                if err != 0:
+                    logging.warning("Problem with table Select.")
+                    logging.error(f"error code: {err}")
+                else:
+                    logging.error("An unknown problem has occured.")
+                    raise Exception("An unknown problem has occured.")
+        else:
+            try:
+                self.cursor.execute(f"SELECT {query_for} FROM {query_table};")
+                return self.cursor.fetchall()
+            except Error as err:
+                if err != 0:
+                    logging.warning("Problem with table Select.")
+                    logging.error(f"error code: {err}")
+                else:
+                    logging.error("An unknown problem has occured.")
+                    raise Exception("An unknown problem has occured.")
 
     def insert_data(self, table_name: str, columns: str, data: str):
         """
@@ -71,8 +83,30 @@ class Database():
             else:
                 logging.error("An unknown problem has occured.")
                 raise Exception("An unknown problem has occured.")
+    
+    def update_row(self, table_name: str, data_args: str, where: str):
+        """
+        Updates a row in a table with the given name
 
-    def custom_query(self, sql_query:str):
+        Args:
+            table_name: str
+                The name of the table to be updated
+            data_args: str
+                The arguments for the table to be updated
+            where: str
+                The where statement for the update
+        """
+        try:
+            self.cursor.execute(f"UPDATE {table_name} SET {data_args} WHERE {where}")
+        except Error as err:   
+            if err != 0:
+                logging.warning("Problem with table Update.")
+                logging.error(f"error code: {err}")
+            else:
+                logging.error("An unknown problem has occured.")
+                raise Exception("An unknown problem has occured.")
+
+    def custom_query(self, sql_query: str):
         """
         Executes a custom query
 
@@ -89,6 +123,7 @@ class Database():
             else:
                 logging.error("An unknown problem has occured.")
                 raise Exception("An unknown problem has occured.")
+        self.commit()
 
     #######################
     # Table Manipulation
@@ -128,6 +163,24 @@ class Database():
         except Error as err:
             if err != 0:
                 logging.warning("Problem with table Alter.")
+                logging.error(f"error code: {err}")
+            else:
+                logging.error("An unknown problem has occured.")
+                raise Exception("An unknown problem has occured.")
+    
+    def clear_table(self, table_name: str):
+        """
+        Clears a table with the given name
+
+        Args:
+            table_name: str
+                The name of the table to be cleared
+        """
+        try:
+            self.cursor.execute(f"DELETE FROM {table_name}")
+        except Error as err:   
+            if err != 0:
+                logging.warning("Problem with table Clear.")
                 logging.error(f"error code: {err}")
             else:
                 logging.error("An unknown problem has occured.")
