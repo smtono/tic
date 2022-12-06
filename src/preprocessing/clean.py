@@ -57,7 +57,31 @@ def deretweet(text):
     Returns:
         The string of text with retweets removed.
     """
-    return re.sub(r'^RT:[\r\n]*', '', text, flags=re.MULTILINE)
+    return re.sub(r'^RT[\r\n]*', '', text, flags=re.MULTILINE)
+
+def demention(text: str) -> str:
+    """
+    Removes mentions from the text
+
+    Args:
+        text (str):
+            The text to remove mentions from
+    Returns:
+        The text with mentions removed
+    """
+    return re.sub(r'@\S+', '', text)
+
+def dehashtag(text: str) -> str:
+    """
+    Removes hashtags from the text
+
+    Args:
+        text (str):
+            The text to remove hashtags from
+    Returns:
+        The text with hashtags removed
+    """
+    return re.sub(r'#\S+', '', text)
 
 def remove_stopwords(text: str) -> str:
     """
@@ -86,11 +110,32 @@ def run_all(text: str) -> str:
     Returns:
         The cleaned text
     """
-    text = demoji(text)
-    text = deurl(text)
+    original_text = text
+    
+    text = text.replace("'", "")
+    text = text.replace('"', '')
+    
+    text = text.replace('\n', '')
+    text = text.replace('\r', '')
+    text = text.replace('\t', '')
+    
+    demoji_text = demoji(text)
+    
+    if demoji_text == '':
+        demoji_text = original_text
+    
+    text = deurl(demoji_text)
     text = deretweet(text)
-    text = remove_stopwords(text)
-    return text
+    text = demention(text)
+    text = dehashtag(text)
+    
+    text = text.replace("  ", " ")
+    text = text.strip()
+
+    if text == '':
+        return original_text
+    else:
+        return text
 
 if __name__ == "__main__":
     test = [
