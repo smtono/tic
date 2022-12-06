@@ -22,6 +22,8 @@ We will be using the following technologies and methods
 import logging
 import os
 import json
+import sys
+import time
 
 from googleapiclient import discovery
 class Perspective():
@@ -59,7 +61,7 @@ class Perspective():
       # TODO: specific exception handling ?
       # raise Exception("No API key provided for Perspective API")
 
-  def analyze(self, text: str, requested_attributes: dict=None) -> dict:
+  def analyze(self, text: str, requested_attribute: str=None) -> dict:
     """
     Analyzes the text using the Perspective API
     
@@ -69,29 +71,75 @@ class Perspective():
     Returns:
       The response from the Perspective API
     """
+    response = {}
     if not self.client:
       logging.warning("No client configured for Perspective API")
       return None
 
-    if not requested_attributes:
-      requested_attributes = {
-        'TOXICITY': {},
-        'INSULT': {},
-        'THREAT': {},
-        'SEXUALLY_EXPLICIT': {},
-        'FLIRTATION': {},
-        'ATTACK_ON_AUTHOR': {},
-        'ATTACK_ON_COMMENTOR': {},
-        'INFLAMMATORY': {},
-        'OBSCENE': {},
+    if not requested_attribute:
+      requested_attribute = {
+        'TOXICITY': {}
       } # default
-    else:
-        # TODO: create structs for requested attributes / different combos
-        pass
+      request = {
+          'comment': { 'text': text },
+          'requestedAttributes': requested_attribute
+      }
+      try:
+        time.sleep(1) # Perspective API has a limit of 1 request per second
+        res = self.client.comments().analyze(body=request).execute()
+        response['TOXICITY'] = res["attributeScores"]['TOXICITY']["summaryScore"]["value"]
+      except Exception as e:
+          print(f"{e}\n\n")
+          response['TOXICITY'] = 0.0
 
-    analyze_request = {
-      'comment': { 'text': text },
-      'requestedAttributes': requested_attributes
-    }
+    elif requested_attribute == "ALL":
+      attributes = [
+        "INSULT",
+        "THREAT",
+        "SEXUALLY_EXPLICIT",
+      ]
+      for attribute in attributes:
+        request = {
+          'comment': { 'text': text },
+          'requestedAttributes': {attribute: {}}
+        }
+        try:
+          time.sleep(2) # Perspective API has a limit of 1 request per second
+          res = self.client.comments().analyze(body=request).execute()
+          response[attribute] = res["attributeScores"][attribute]["summaryScore"]["value"]
+        except Exception as e:
+          if e.resp.status == 429:
+            print("API rate limit exceeded")
+            sys.exit(1)
+          else:
+            print(f"{e}\n\n")
+            response[attribute] = 0.0
+
+      return response
+  
+    else:
+      requested_attributes = {
+        requested_attribute.upper(): {}
+      }
+
+      analyze_request = {
+        'comment': { 'text': text },
+        'requestedAttributes': requested_attributes
+      }
+
+      try:
+        time.sleep(1) # Perspective API has a limit of 1 request per second
+        res = self.client.comments().analyze(body=analyze_request).execute()
+        response = res["attributeScores"][requested_attribute.upper()]["summaryScore"]["value"]
+      except Exception as e:
+        print(f"{e}\n\n")
+        response[attribute] = 0.0
     
-    return self.client.comments().analyze(body=analyze_request).execute()
+    return response
+
+if __name__ == "__main__":
+  # Test Perspective API
+  request = "all"
+  perspective = Perspective(os.environ['GOOGLE_PERSPECTIVE_API_KEY'])
+  response = perspective.analyze("You are a stupid idiot", request)
+  print(response)
