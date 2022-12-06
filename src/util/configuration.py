@@ -72,6 +72,13 @@ class Configuration():
                                   "inflammatory_score REAL, "
                                   "obscene_score REAL, "
                                   "PRIMARY KEY (postID)")
+            database.create_table("clusters",
+                                  "cluster TEXT, ",
+                                  "representative int, ", # postID
+                                  "toxicity_score REAL, "
+                                  "insult_score REAL, "
+                                  "threat_score REAL, "
+                                  "sexually_explicit_score REAL")
             database.create_table("community", "community TEXT, score REAL, topics TEXT, PRIMARY KEY (community)")
     
     def setup_api(self) -> None:
