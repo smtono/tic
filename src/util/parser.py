@@ -15,7 +15,7 @@ Commands include:
         Run entity recognition mining to gain topically relevant words
     -analyze <method> <dataset>
         Analyzes the data in the source table by running distance metrics and sentiment analysis
-    -visualize <method> <dataset>
+    -visualize <method> <args> <dataset>
         Visualizes the data in the source table by creating graphs and charts
 """
 
@@ -32,10 +32,15 @@ class Parser():
 
         # Supported commands
         self.commands = {
+            # Data collection and analysis
             "get": self.get,
             "clean": self.clean,
+            "gain": self.gain,
             "analyze": self.analyze,
-            "visualize": self.visualize
+            "visualize": self.visualize,
+            
+            # Administative commands
+            "sql": self.sql,
         }
 
     def parse(self, args: list):
@@ -104,13 +109,65 @@ class Parser():
         # Get the data that has that name from DB
         data = self.ctx['database'].select_data('*', 'unprocessed', f"community = '{dataset}'")
         
-        cleaned_data = []
         # Clean the data
         for row in data:
-            cleaned_data.append(run_all(row[2]))
+            res = run_all(row[2])
+
+            # Insert the cleaned data into the processed table
+            self.ctx['database'].insert_data(
+                'processed',
+                'community, postID, data',
+                f"'{dataset}', '{row[1]}', '{res}'")
         
-        # Insert the cleaned data into the processed table
-        self.ctx['database'].insert_data('processed', 'community, postID, data', f"'{dataset}', '{row[1]}', '{cleaned_data}'")
+        self.ctx['database'].commit()
+
+    def gain(self, args: list):
+        """
+        Gains the data in the source table by running perspective API
+        """
+        # Create args
+        method = args[0]
+        
+        if method == 'perspective':
+            valid_attributes = [
+                "ALL",
+                "TOXICITY",
+                "INSULT",
+                "THREAT",
+                "SEXUALLY_EXPLICIT",
+                "FLIRTATION",
+                "ATTACK_ON_AUTHOR",
+                "ATTACK_ON_COMMENTER",
+                "INFLAMMATORY",
+                "OBSCENE",
+            ]
+            
+            # Args
+            if args[1].upper() in valid_attributes:
+                attribute = args[1].upper()
+            else:
+                attribute = 'TOXICITY'
+
+            print("Beginning Perspective analysis")
+            # Get the data that has that name from DB
+            try:
+                data = self.ctx['database'].select_data('*', 'processed')
+            except Exception as e:
+                print(e)
+                return
+
+            for row in data:
+                metrics = self.ctx['perspective'].analyze(row[2], attribute)
+                
+                for metric in metrics:
+                    # Insert metrics into DB
+                    self.ctx['database'].update_row(
+                        'processed', 
+                        f"{metric.lower()}_score = '{metrics[metric]}'",
+                        f"postID = '{row[1]}'")
+                    self.ctx['database'].commit()
+            
+            print("Perspective analysis complete")
 
     def analyze(self, args: list):
         """
@@ -122,3 +179,13 @@ class Parser():
         """
         Visualizes the data in the source table by creating graphs and charts
         """
+    
+    def sql(self, args: list):
+        """
+        Executes a SQL query on the database
+        """
+        # Get the query
+        query = ' '.join(args)
+        
+        # Execute the query
+        self.ctx['database'].custom_query(query)
