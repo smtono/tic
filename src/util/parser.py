@@ -20,6 +20,7 @@ Commands include:
 """
 
 from analysis.cluster import get_representative
+from analysis.distance import get_distance
 from preprocessing.clean import run_all
 class Parser():
     """
@@ -214,18 +215,19 @@ class Parser():
                 
                 # Add cluster rep to DB
                 self.ctx['database'].insert_data(
+                    "clusters",
                     "cluster, "
                     "representative, "
                     "toxicity_score, "
                     "insult_score, "
                     "threat_score, "
                     "sexually_explicit_score",
-                    f"'{community}', "
+                    f"'{community[0][0]}', "
                     f"'{cluster[0]}', "
-                    f"'{cluster[1]}', "
-                    f"'{cluster[2]}', "
-                    f"'{cluster[3]}', "
-                    f"'{cluster[4]}', "
+                    f"'{cluster[1][0]}', "
+                    f"'{cluster[1][1]}', "
+                    f"'{cluster[1][2]}', "
+                    f"'{cluster[1][3]}'"
                 )
 
             self.ctx['database'].commit()
@@ -240,8 +242,55 @@ class Parser():
         Args:
             args (list): _description_
         """
-        obj1 = args[0]
-        obj2 = args[1]
+        distances = {
+            'gaming': {},
+            'politics': {},
+            'youtube': {},
+            'stem': {}
+        }
+        data = self.ctx['database'].select_data('*', 'clusters')
+
+        for cluster in data:
+            community = cluster[0]
+            post_id = cluster[1]
+            toxicity_score = cluster[2]
+            insult_score = cluster[3]
+            threat_score = cluster[4]
+            sexually_explicit_score = cluster[5]
+            
+            for other_cluster in data:
+                if other_cluster[0] != community:
+                    other_post_id = other_cluster[1]
+                    other_toxicity_score = other_cluster[2]
+                    other_insult_score = other_cluster[3]
+                    other_threat_score = other_cluster[4]
+                    other_sexually_explicit_score = other_cluster[5]
+                    
+                    distance = get_distance(
+                        [toxicity_score, insult_score, threat_score, sexually_explicit_score],
+                        [other_toxicity_score, other_insult_score, other_threat_score, other_sexually_explicit_score]
+                    )
+                    
+                    distances[f"{community}"][f"{other_cluster[0]}"] = distance
+        
+        clusters = ['gaming', 'politics', 'youtube', 'stem']
+        for cluster in distances.keys():
+            for community in distances.values():
+                self.ctx['database'].insert_data(
+                    "results",
+                    f"cluster",
+                    f"'{cluster}'"
+                )
+                for comm in clusters:
+                    try:
+                        self.ctx['database'].update_row(
+                            "results",
+                            f"{comm} = '{community[comm]}'",
+                            f"cluster = '{cluster}'"
+                        )
+                    except KeyError:
+                        continue
+        self.ctx['database'].commit()
     
     def visualize(self, args: list):
         """
