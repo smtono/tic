@@ -258,6 +258,7 @@ class Parser():
             threat_score = cluster[4]
             sexually_explicit_score = cluster[5]
             
+            metrics = []
             for other_cluster in data:
                 if other_cluster[0] != community:
                     other_post_id = other_cluster[1]
@@ -266,31 +267,61 @@ class Parser():
                     other_threat_score = other_cluster[4]
                     other_sexually_explicit_score = other_cluster[5]
                     
-                    distance = get_distance(
-                        [toxicity_score, insult_score, threat_score, sexually_explicit_score],
-                        [other_toxicity_score, other_insult_score, other_threat_score, other_sexually_explicit_score]
-                    )
+                    
+                    mesaures = [
+                        (toxicity_score, other_toxicity_score), 
+                        (insult_score, other_insult_score), 
+                        (threat_score, other_threat_score), 
+                        (sexually_explicit_score, other_sexually_explicit_score)
+                    ]
+                    
+                    distance = 0
+                    for value1, value2 in mesaures:
+                        distance += ((value1 - value2) ** 2) ** 0.5
                     
                     distances[f"{community}"][f"{other_cluster[0]}"] = distance
         
         clusters = ['gaming', 'politics', 'youtube', 'stem']
+        
+        for cluster in clusters:
+            self.ctx['database'].insert_data( # Add this cluster to the DB
+                "results",
+                f"cluster",
+                f"'{cluster}'"
+            )
+        
+        # Add the distances to the DB
+        for community, metrics in distances.items():
+            for other_community in metrics:
+                try:
+                    self.ctx['database'].update_row(
+                        "results",
+                        f"{other_community} = '{metrics[other_community]}'",
+                        f"cluster = '{community}'"
+                    )
+                except KeyError:
+                    continue
+        self.ctx['database'].commit()
+        
+        '''
         for cluster in distances.keys():
             for community in distances.values():
-                self.ctx['database'].insert_data(
+                self.ctx['database'].insert_data( # Add this cluster to the DB
                     "results",
                     f"cluster",
                     f"'{cluster}'"
                 )
-                for comm in clusters:
-                    try:
-                        self.ctx['database'].update_row(
-                            "results",
-                            f"{comm} = '{community[comm]}'",
-                            f"cluster = '{cluster}'"
-                        )
-                    except KeyError:
-                        continue
+            for comm in clusters:
+                try:
+                    self.ctx['database'].update_row(
+                        "results",
+                        f"{comm} = '{community[comm]}'",
+                        f"cluster = '{cluster}'"
+                    )
+                except KeyError:
+                    continue
         self.ctx['database'].commit()
+        '''
     
     def visualize(self, args: list):
         """
