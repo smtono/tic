@@ -19,6 +19,7 @@ Commands include:
         Visualizes the data in the source table by creating graphs and charts
 """
 
+from analysis.cluster import get_representative
 from preprocessing.clean import run_all
 class Parser():
     """
@@ -36,7 +37,8 @@ class Parser():
             "get": self.get,
             "clean": self.clean,
             "gain": self.gain,
-            "analyze": self.analyze,
+            "cluster": self.cluster,
+            "distance": self.distance,
             "visualize": self.visualize,
             
             # Administative commands
@@ -168,12 +170,78 @@ class Parser():
                     self.ctx['database'].commit()
             
             print("Perspective analysis complete")
+    
+    def cluster(self, args: list):
+        """
+        Clusters the data in the source table by running kmeans
+        Finds representatives of each cluster
+        
+        Examples:
+            cluster kmeans <dataset> <k>
+            cluster community <dataset>
+        """
+        method = args[0] # clustering method
+        
+        if method == 'community':
+            data = []
+            
+            # Get data
+            gaming_data = self.ctx['database'].select_data('*', 'processed', "community = 'gaming'")
+            politics_data = self.ctx['database'].select_data('*', 'processed', "community = 'politics'")
+            youtube_data = self.ctx['database'].select_data('*', 'processed', "community = 'youtube'")
+            stem_data = self.ctx['database'].select_data('*', 'processed', "community = 'stem'")
+            
+            data.append(gaming_data)
+            data.append(politics_data)
+            data.append(youtube_data)
+            data.append(stem_data)
+            
+            # 0 = community,
+            # 1 = postID, 
+            # 2 = data
+            # 3 = toxicity_score
+            # 4 = insult_score
+            # 5 = threat_score
+            # 6 = sexually_explicit_score
+            for community in data:
+                scores = {} # container for scores
 
-    def analyze(self, args: list):
+                for row in community: # Add scores
+                    scores[row[1]] = [row[3], row[4], row[5], row[6]]
+            
+                # Find the representative
+                cluster = get_representative(scores)
+                
+                # Add cluster rep to DB
+                self.ctx['database'].insert_data(
+                    "cluster, "
+                    "representative, "
+                    "toxicity_score, "
+                    "insult_score, "
+                    "threat_score, "
+                    "sexually_explicit_score",
+                    f"'{community}', "
+                    f"'{cluster[0]}', "
+                    f"'{cluster[1]}', "
+                    f"'{cluster[2]}', "
+                    f"'{cluster[3]}', "
+                    f"'{cluster[4]}', "
+                )
+
+            self.ctx['database'].commit()
+
+        else:
+            print("Not implemented yet")
+    
+    def distance(self, args: list):
         """
-        Analyzes the data in the source table by running distance metrics and sentiment analysis
-        As well as running entity recognition mining and text mining
+        Finds the distance between two objects
+
+        Args:
+            args (list): _description_
         """
+        obj1 = args[0]
+        obj2 = args[1]
     
     def visualize(self, args: list):
         """
