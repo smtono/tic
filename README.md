@@ -32,6 +32,8 @@ The same amount of data will be requested from each community. Communities that 
 
 This is to cover a large area of people who may or may not intersect in communities. Once data is gathered, it will be stored in the database as is, alongside the post ID that Twitter provides. Due to the time constraint of the project, only a small number of communities will be examined, though the breadth of each community should be enough to generate meaningful results for each community listed above.
 
+![Example Data Generation stored in SQLite Database]()
+
 ### Preprocessing
 
 Preprocessing
@@ -87,3 +89,58 @@ A command line interface was created for facilitating the process. This CLI allo
 
 
 ## Results
+
+![K-Medoids representative results]()
+
+When running the K-Medoids algorithm on each community cluster, the following values came up. Each of these representatives is one node in its respective cluster. The attributes for each are the postID associated with it, a toxicity score, an insult score, a threat score, and a sexually explicit score. These values are then used to compare distances between clusters.
+
+![Distance results between communities]()
+
+Finally, when analyzing the distances between communities, the following results were captured. This was done by calculating the Euclidean distances from each community to every other community. All metics (toxicity, insult, threat, sexually explicit) scores were taken into account in this calculation. In the table, you can then see the results. The higher a number, the more distance there is between two clusters (communities). 
+
+| Community | Most Similar | Most Different |
+| --------- | ------------ | -------------- |
+| Gaming | STEM | YouTube |
+| Politics | YouTube | STEM |
+| YouTube | Politics | STEM |
+| STEM | Politics | YouTube |
+
+In other words, out of these communities, the Politics community was able to go to 50% of the communities as most similar, while it was 50/50 between YouTube and STEM for most dissimilar. 
+
+There are a few reasons why this may be the case. Politics could be most similar to YouTube and STEM due to how outspoken these communities usually are. YouTube is always critical of their creators and others, and commenters on these types of videos are usually unsavory. As for STEM, this community is notorious for being “toxic” when it comes to elitism within the community. Many members of the community shame others based on what operating system they may use, or what programming languages they find best.
+
+It is unsurprising that Politics, the most divisive and threatening community, share commonalities with them. The same reasoning can go for the most different as well.
+
+As to why the Gaming community appears on neither of these lists, it may be that the Gaming community is very diverse in what people are involved with online. There are many sub-communities within it that are considered “wholesome” by the greater community. This may have skewed the toxicity scores one way, since gaming was looked at wholly.
+
+## Conclusion
+
+### Success
+
+The success of this project is rather subjective. While it does not shine a huge light on how similar or dissimilar certain communities can be with toxicity, it does provide insight on how this analysis can be applied further in the future. However, when looking at the original premise of the project, it can be surmised that looking at communities in this manner can shed light on where connections lie. Smaller distances between communities can suggest that there are similar levels of toxicity, and those communities should then be examined further.
+
+### Failure
+
+The biggest caveat on this project is that there is just not enough data to go off of. The dataset created for this project is rather small (<2000 data points) so it is hard to say if any results obtained this way are really indicative of real connections between communities or not. There would certainly need to be more analysis done, and most likely not on the sole merit of toxicity scores alone. Topics and language used by the communities is something else Shannon wanted to look at, however there was not enough time to conduct this search as well.
+
+Another big issue was processing time of the data. Perspective API, while very powerful and a main point of strength in the analysis portion of the project, was very weak when it came to analyzing data quickly. Google caps queries with this API at an astounding 1 QPS (query per second)! And even with this metric, it still took longer than that before Google would rate limit. So, the main reason the dataset was so small was due to this issue.
+
+### Lessons Learned
+
+The biggest lesson learned is how to conduct the entire KDD process from start to finish. This project generated, cleaned, and then analyzed the data fully to answer the proposed question.
+The most exciting tools used would have to be from the scikit-learn toolkit. This resource is very valuable if working in Python, and is something the team sees itself using in the future. 
+
+Another lesson learned is how to conduct analysis on a dataset, and deciding what approach to take. Most of this project was spent on how these moving parts would come together, and one part of this was figuring out a process for actually analyzing the data. The team looked into the class lectures for insight on how to incorporate different algorithms together, until it was finally decided that the clusters -> representatives -> distances approach would be the most logical way to go, since there was numerical data.
+
+### Future Work
+
+Future prospects regarding this project can go many different directions. Firstly, the algorithm should be used on a much larger and much more diverse dataset. Possibly taking into account other social media websites as well, such as Reddit or Facebook.
+
+The biggest issue with this project would be the size of the dataset, so being able to query for a large amount of data with a wider array of communities could lead to more results of connections between different communities on the website.
+
+Another possible way to change the algorithm used would be to take into account all the toxicity scores gather in the preprocessing step. Using distance functions for all toxicity scores gathered would provide more insight on what type of language is used by different communities, and if communities are closer to each other depending on the type of language used.
+
+Another way to expand on that point would be to incorporate some way of detecting what topics are being talked about within a cluster. This can be used to further investigate how exactly the toxicity between communities match up, and what type of language they use.
+
+Also, more clustering algorithms could be used as well. Clustering the data in different ways, or pruning the data further so that you are left with just the “toxic” data, can give better insight in regards to what topics are being talked about. Using this approach alongside the topic recognition could provide a lot more insight into the premise of this project.
+
